@@ -7,6 +7,9 @@ from .platform import (
     sanitize_filename,
     sanitize_directory_name,
     get_platform_info,
+    extract_date_from_filename,
+    generate_realistic_timestamp,
+    set_file_timestamp,
 )
 
 __all__ = [
@@ -16,4 +19,7 @@ __all__ = [
     "sanitize_filename",
     "sanitize_directory_name",
     "get_platform_info",
+    "extract_date_from_filename",
+    "generate_realistic_timestamp",
+    "set_file_timestamp",
 ]

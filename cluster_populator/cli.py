@@ -96,6 +96,12 @@ Examples:
     )
 
     parser.add_argument(
+        "--no-timestamps",
+        action="store_true",
+        help="Disable realistic file timestamps (timestamps enabled by default)",
+    )
+
+    parser.add_argument(
         "--platform-info",
         action="store_true",
         help="Show platform information and exit",
@@ -152,11 +158,15 @@ Examples:
     # --windows flag forces it on, otherwise auto-detect
     sanitize_for_windows = True if args.windows else None
 
+    # Timestamps enabled by default, --no-timestamps disables
+    realistic_timestamps = not args.no_timestamps
+
     orchestrator = Orchestrator(
         seed=args.seed,
         concurrency=args.concurrency,
         progress_callback=progress_callback,
         sanitize_for_windows=sanitize_for_windows,
+        realistic_timestamps=realistic_timestamps,
     )
 
     if args.preview:
@@ -198,6 +208,8 @@ Examples:
             print("Windows filename sanitization: enabled (forced)")
         elif is_windows():
             print("Windows filename sanitization: enabled (auto-detected)")
+        if not args.no_timestamps:
+            print("Realistic timestamps: enabled")
         print()
 
     start_time = time.time()

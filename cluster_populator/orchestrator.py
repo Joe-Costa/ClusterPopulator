@@ -9,6 +9,7 @@ from typing import Callable
 from .generators.content import ContentGenerator
 from .generators.files import FileGenerator
 from .generators.structure import StructureGenerator, FileSpec
+from .utils.platform import set_file_timestamp
 
 
 @dataclass
@@ -43,6 +44,7 @@ class Orchestrator:
         concurrency: int = 10,
         progress_callback: Callable[[int, int], None] | None = None,
         sanitize_for_windows: bool | None = None,
+        realistic_timestamps: bool = True,
     ):
         """
         Initialize the orchestrator.
@@ -53,11 +55,13 @@ class Orchestrator:
             progress_callback: Optional callback for progress updates (current, total)
             sanitize_for_windows: If True, sanitize filenames for Windows. If False, skip.
                                  If None (default), auto-detect based on current platform.
+            realistic_timestamps: If True, set file timestamps to realistic past dates.
         """
         self.seed = seed
         self.concurrency = concurrency
         self.progress_callback = progress_callback
         self.sanitize_for_windows = sanitize_for_windows
+        self.realistic_timestamps = realistic_timestamps
         self.content_gen = ContentGenerator(seed=seed)
         self.file_gen = FileGenerator(content_gen=self.content_gen)
         self.structure_gen = StructureGenerator(seed=seed, sanitize_for_windows=sanitize_for_windows)
@@ -109,10 +113,14 @@ class Orchestrator:
                     if generator_method:
                         method = getattr(self.file_gen, generator_method)
                         await method(spec.path, spec.content_type)
-                        return True, spec.path, None
                     else:
                         await self.file_gen.generate_txt(spec.path, "memo")
-                        return True, spec.path, None
+
+                    # Set realistic timestamps if enabled
+                    if self.realistic_timestamps:
+                        set_file_timestamp(spec.path)
+
+                    return True, spec.path, None
                 except Exception as e:
                     return False, spec.path, str(e)
                 finally:

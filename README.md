@@ -1,6 +1,8 @@
 # ClusterPopulator
 
-Generate realistic business file structures with sample data. Creates directories and files that simulate a typical enterprise file share for more realistic product demos.
+Generate realistic business file structures with sample data.
+<br><br>
+This tool creates directories and files that simulate a typical enterprise file share for more realistic product demos, including realistic timestamps
 
 ## Installation
 
@@ -41,6 +43,7 @@ python -m cluster_populator ./output 100 --windows
 | `-p, --preview` | Preview structure without creating files |
 | `-w, --windows` | Force Windows-compatible filenames |
 | `-q, --quiet` | Suppress progress output |
+| `--no-timestamps` | Disable realistic file timestamps |
 | `--platform-info` | Show platform detection info |
 
 ## Directory Structure
@@ -88,6 +91,17 @@ output/
 - **macOS/Linux**: Use `--windows` flag when generating files for Windows targets
 
 Sanitization removes invalid characters (`< > : " / \ | ? * &`) and handles reserved names (`CON`, `PRN`, `COM1`, etc.).
+
+## Realistic Timestamps
+
+Files are created with realistic modification timestamps:
+
+- Dates embedded in filenames are used (e.g., `Report_2023-04-15.pdf` gets April 2023 timestamp)
+- Supported formats: `YYYY-MM-DD`, `YYYYMMDD`, `MMDDYYYY`, `Q1-Q4_YYYY`
+- Files without dates get random timestamps within the last 2 years
+- Business hours bias (80% of files show 8am-6pm creation times)
+
+Disable with `--no-timestamps` if current timestamps are preferred.
 
 ## Performance
 
